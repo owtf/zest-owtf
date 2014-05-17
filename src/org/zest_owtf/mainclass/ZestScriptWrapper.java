@@ -9,8 +9,7 @@ import org.mozilla.zest.core.v1.ZestScript;
 
 public class ZestScriptWrapper extends ScriptWrapper {
 	
-	public static final String ZAP_BREAK_VARIABLE_NAME = "zap.break";
-	public static final String ZAP_BREAK_VARIABLE_VALUE = "set";
+
 
 	private boolean incStatusCodeAssertion = true;
 	private boolean incLengthAssertion = true;
@@ -24,32 +23,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	public ZestScriptWrapper  (ScriptWrapper script) {
 		this.original = script;
 		zestScript = (ZestScript) ZestJSON.fromString(script.getContents());
-/*		if (zestScript == null) {
-			// new script
-			zestScript = new ZestScript();
-			Type ztype;
-			switch (script.getType().getName()) {
-			case ExtensionActiveScan.SCRIPT_TYPE_ACTIVE:
-				ztype = Type.Active;
-				break;
-			case ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE:
-				ztype = Type.Passive;
-				break;
-			case ExtensionScript.TYPE_TARGETED:
-				ztype = Type.Targeted;
-				break;
-			case ExtensionScript.TYPE_PROXY:
-				ztype = Type.Targeted;
-				break;
-			case ExtensionScript.TYPE_STANDALONE:
-			case ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH:
-			default:
-				ztype = Type.StandAlone;
-				break;
-			}
-			zestScript.setType(ztype);
-			zestScript.setDescription(script.getDescription());
-		}*/
+
 		// Override the title in case its taken from a template
 		zestScript.setTitle(script.getName());
 
@@ -93,43 +67,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		return zestScript;
 	}
 	
-/*Not working yet :P
- 
- * 	@SuppressWarnings("unchecked")
-	public <T> T getInterface(Class<T> class1) throws ScriptException, IOException {
-		// Clone the wrapper so that we get a new instance every time
-		if (class1.isAssignableFrom(ZestPassiveRunner.class)) {
-			return (T) new ZestPassiveRunner(this.getExtension(), this.clone());
-			
-		} else if (class1.isAssignableFrom(ZestActiveRunner.class)) {
-			return (T) new ZestActiveRunner(this.getExtension(), this.clone());
-			
-		} else if (class1.isAssignableFrom(ZestTargetedRunner.class)) {
-			return (T) new ZestTargetedRunner(this.getExtension(), this.clone());
-			
-		} else if (class1.isAssignableFrom(ZestProxyRunner.class)) {
-			return (T) new ZestProxyRunner(this.getExtension(), this.clone());
-			
-		} else if (class1.isAssignableFrom(ZestAuthenticationRunner.class)) {
-			return (T) new ZestAuthenticationRunner(this.getExtension(), this.clone());
-		}
-		return null;
-	}
 
-	private ExtensionZest getExtension() {
-		if (extension == null) {
-			extension = (ExtensionZest) Control.getSingleton().getExtensionLoader().getExtension(ExtensionZest.NAME);
-		}
-		return extension;
-	}
-	
-	protected ZestScriptWrapper clone() {
-		ZestScriptWrapper clone = new ZestScriptWrapper(this.original);
-		clone.setWriter(this.getWriter());
-		clone.setDebug(this.isDebug());
-		clone.setRecording(this.isRecording());
-		return clone;
-	}*/
 
 	public String getContents() {
 		return ZestJSON.toString(this.zestScript);

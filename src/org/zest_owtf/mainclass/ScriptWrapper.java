@@ -6,6 +6,9 @@ import java.io.Writer;
 
 import javax.script.ScriptException;
 
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
+import org.zaproxy.zap.extension.script.ScriptType;
+
 public class ScriptWrapper {
 
 	private String name;

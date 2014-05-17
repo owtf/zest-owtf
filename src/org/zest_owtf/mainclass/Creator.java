@@ -45,29 +45,9 @@ private static void create(List <HttpMessage> msg) throws MalformedURLException,
 
 	for(int i=0;i<msg.size();i++)
 	{
-		//System.out.println(obj.get(i).content);
+		create (msg.get(i));
 	
-	
-		//System.out.println(obj.req_header);
-		//byte[] b = page.getBytes(Charset.forName("UTF-8"));
-		//System.out.println(b);
-	
-	//	System.out.println(obj.get(i).res_header);
-	
-	
-		//HttpMessage msg = new HttpMessage (obj.get(i).req_header,null,obj.get(i).res_header,obj.get(i).res_array);
-	    create (msg.get(i));
-		
-	
-		
-	
-		
 	}
-	
-	
-
-	
-
 
 }
 
@@ -76,50 +56,7 @@ private static void create (HttpMessage msg) throws MalformedURLException, HttpM
 	
 	ZestRequest req = ZestZapUtils.toZestRequest(msg, false);
 	zScr.add(req);
-}
-
-
-
-
+	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

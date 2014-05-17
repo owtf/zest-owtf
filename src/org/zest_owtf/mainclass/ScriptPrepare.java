@@ -1,6 +1,7 @@
 package org.zest_owtf.mainclass;
 
 import org.mozilla.zest.core.v1.ZestScript;
+import org.zaproxy.zap.extension.script.ScriptType;
 
 public class ScriptPrepare {
 	
