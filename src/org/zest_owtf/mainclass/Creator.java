@@ -21,13 +21,12 @@ public class Creator {
 	public static ZestScript zScr=null;
 	
 	
-    public Creator(List<HttpMessage> msg,ZestScript scr) throws MalformedURLException, HttpMalformedHeaderException, SQLException{
+    public Creator(List<HttpMessage> msg,ZestScript scr,String Path) throws MalformedURLException, HttpMalformedHeaderException, SQLException{
     	
     	zScr=scr;
     	create(msg);
     	String res=(String) ZestJSON.toString(zScr);
-    	
-    	System.out.println(res);
+    	FileWrtr fw = new FileWrtr(res,Path);
     }
 	
     public Creator(HttpMessage msg,ZestScript scr) throws MalformedURLException, HttpMalformedHeaderException, SQLException{

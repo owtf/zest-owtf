@@ -132,8 +132,8 @@ public class HttpMessage implements Message {
 		setRequestHeader(reqHeader);
 		setRequestBody(reqBody);
 		if (resHeader != null && !resHeader.equals("")) {
-		    setResponseHeader(resHeader);
-		    setResponseBody(resBody);
+			setResponseHeader(resHeader);
+			setResponseBody(resBody);
 		}
 	}
 

@@ -17,31 +17,31 @@ public class Tester {
 	List<String> url = new ArrayList<String>();
 	static List<CustomObject> obj= new ArrayList<CustomObject>();
 	static List<HttpMessage> msg = new ArrayList<HttpMessage>();
+	
+	
 public static void main(String[] args) throws Exception {
+	
+	//	Filereader rdr = new Filereader("/root/zest-owtf/url.txt",false);
+	//	obj=GetPageContent(rdr.fileLineContent);
+	
+		String Root_Dir=args[4];
+		ScriptPrepare scr= new ScriptPrepare(Root_Dir);
 		
-		
-		ScriptPrepare scr= new ScriptPrepare();
-		
-		Filereader rdr = new Filereader("url.txt",false);
-		
+		RemoveQuotes(args);
+	
+		String Output_path=args[0];
+		String req_h=args[1];
+		String res_h=args[2];
+		String res_body=args[3];
+		res_h="HTTP/1.1 "+res_h;
+		obj.add(new CustomObject(req_h,res_h,res_body));
+		Convert_to_http();
+		Creator crt = new Creator(msg,scr.scr,Root_Dir+"/"+Output_path);
 		
 
-		obj=GetPageContent(rdr.fileLineContent);
-	
-	    Convert_to_http();
-		
-		Creator crt = new Creator(msg,scr.scr);
-		
-		
-		
-		
-		
 	};
 	
-	
-	
-	
-	
+/*
 	private static List<CustomObject> GetPageContent(List<String> url) throws Exception {
 		 
 		List<CustomObject>cust = new ArrayList<CustomObject>();
@@ -54,7 +54,7 @@ public static void main(String[] args) throws Exception {
 	    
 		request.setHeader("User-Agent", USER_AGENT);
 		request.setHeader("Accept",
-			"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+			"text/html,application/xhtml+xml,application/xml;q=0.9,q=0.8");
 		request.setHeader("Accept-Language", "en-US,en;q=0.5");
 	    
 		HttpResponse response = client.execute(request);
@@ -72,17 +72,24 @@ public static void main(String[] args) throws Exception {
 		return cust;
 		
 	  }
-
+*/
 	
 	 private static void Convert_to_http() throws HttpMalformedHeaderException{
 		 
-		 for(int i=0;i<obj.size();i++)
-		 {
+		 for(int i=0;i<obj.size();i++){
 		  msg.add(new HttpMessage(obj.get(i).req_header,null,obj.get(i).res_header,obj.get(i).res_array));	
-			 
-			 
 		 }
 		 
+	 }
+	 
+	 
+	 private static void RemoveQuotes(String[] ip){
+		 
+		 for(int i=0;i<ip.length;i++){
+			 if(ip[i]!=null && ip[i]!="")
+				 ip[i] = ip[i].substring(1, ip[i].length() - 1);
+			 
+		 }
 		 
 	 }
 	

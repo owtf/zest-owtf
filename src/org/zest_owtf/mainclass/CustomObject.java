@@ -46,7 +46,14 @@ public class CustomObject {
 		
 	}
 
-	
+	public CustomObject(String h_req,String h_res,String b_res) throws Exception {
+		
+		req_header=h_req;
+		res_header=h_res;
+		res_array=b_res.getBytes();
+		
+		
+	}
 	private String GetPageContent(HttpResponse res) throws Exception
 	{
 	BufferedReader rd = new BufferedReader(
