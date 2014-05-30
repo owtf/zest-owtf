@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-
+//Reads content from the given file, useful in testing purpose
 
 public class Filereader {
 	

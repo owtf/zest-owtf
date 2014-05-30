@@ -1,47 +1,69 @@
 package org.zest_owtf.mainclass;
 
+
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 
+import sun.org.mozilla.javascript.internal.NativeArray;
 
+
+//mainly there are two functions of this main class - 1) Creates Zest script given HTTP request (main purpose)
+//                                                    2) Creates Zest script from given urs by making a GET request (testing purpose)
+
+//commented code is for testing purpose
 public class Tester {
-	
+	/*
 	private final static String USER_AGENT = "Mozilla/5.0";
 	private static HttpClient client = HttpClientBuilder.create().build();
 	List<String> url = new ArrayList<String>();
 	static List<CustomObject> obj= new ArrayList<CustomObject>();
 	static List<HttpMessage> msg = new ArrayList<HttpMessage>();
-	
+	*/
 	
 public static void main(String[] args) throws Exception {
 	
 	//	Filereader rdr = new Filereader("/root/zest-owtf/url.txt",false);
 	//	obj=GetPageContent(rdr.fileLineContent);
 	
-		String Root_Dir=args[4];
-		ScriptPrepare scr= new ScriptPrepare(Root_Dir);
-		
-		RemoveQuotes(args);
-	
-		String Output_path=args[0];
-		String req_h=args[1];
-		String res_h=args[2];
-		String res_body=args[3];
-		res_h="HTTP/1.1 "+res_h;
-		obj.add(new CustomObject(req_h,res_h,res_body));
-		Convert_to_http();
-		Creator crt = new Creator(msg,scr.scr,Root_Dir+"/"+Output_path);
-		
+	//Assigns variables from arguments
+	String Root_Dir=args[0];
+	String Output_Dir=args[1];
+	String Output_path=args[2];
+	String[] items = args[3].split(" ");
 
-	};
+	int req_count=items.length;
 	
+	//converts string of transaction ids to List of integers
+	
+	List <Integer> transactions= new ArrayList<Integer>();
+	for(int i=0;i<req_count;i++){
+		
+		transactions.add(Integer.parseInt(items[i]));
+		
+	}
+	
+	//Prepares the script from the template
+	ScriptPrepare scr= new ScriptPrepare(Root_Dir);
+	
+	//gets records of transactions from database of the given target,converts it to custom objects and then to list of HttpMessage
+	//CustomObject is just an intermediate representation to keep a better track of transactions
+	DBHandler db = new DBHandler(transactions,Output_Dir);
+	
+	//Creates Zest script from List of HttpMessage
+	new Creator(db.http_list,scr.scr,Output_path);
+	
+	
+};
+
+
 /*
+    //gets page content from list of urls and return a list of customobjects
+     
 	private static List<CustomObject> GetPageContent(List<String> url) throws Exception {
 		 
 		List<CustomObject>cust = new ArrayList<CustomObject>();
@@ -72,26 +94,20 @@ public static void main(String[] args) throws Exception {
 		return cust;
 		
 	  }
+
+	//for testing purpose
+	private static void printArgs(String[] args)
+	{
+		for(int i=0;i<args.length;i++)
+		{
+			System.out.println(i+" "+args[i]+"\n");
+			
+		}
+	
+		
+	
+	}
 */
-	
-	 private static void Convert_to_http() throws HttpMalformedHeaderException{
-		 
-		 for(int i=0;i<obj.size();i++){
-		  msg.add(new HttpMessage(obj.get(i).req_header,null,obj.get(i).res_header,obj.get(i).res_array));	
-		 }
-		 
-	 }
-	 
-	 
-	 private static void RemoveQuotes(String[] ip){
-		 
-		 for(int i=0;i<ip.length;i++){
-			 if(ip[i]!=null && ip[i]!="")
-				 ip[i] = ip[i].substring(1, ip[i].length() - 1);
-			 
-		 }
-		 
-	 }
-	
+
 
 }

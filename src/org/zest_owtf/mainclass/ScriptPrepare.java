@@ -25,7 +25,7 @@ public class ScriptPrepare {
 		script.setDescription(null);
 		script.setLoadOnStart(false);
 		
-		//zest-scriptwrapper created
+		//zest-scriptwrapper 
 		ZestScriptWrapper zsw = new ZestScriptWrapper(script);
 		
 		scr= zsw.getZestScript();

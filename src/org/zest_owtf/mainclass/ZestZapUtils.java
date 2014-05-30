@@ -7,8 +7,6 @@ import java.sql.SQLException;
 
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
-
-
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 

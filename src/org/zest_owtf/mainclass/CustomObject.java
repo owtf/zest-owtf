@@ -2,13 +2,14 @@ package org.zest_owtf.mainclass;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 
-// a class for testing purpose until sending requests from report is implemented 
-// converts given http objects combined in one.
+
+// a class that facilitates combining of http components in single object before converting to HttpMessage.
+//also helpful in testing purpose for string-header conversions
 
 public class CustomObject {
 	 public HttpGet request;
@@ -45,11 +46,13 @@ public class CustomObject {
 		
 		
 	}
-
-	public CustomObject(String h_req,String h_res,String b_res) throws Exception {
+//main useful constructor
+	
+	public CustomObject(String h_req,String res_status,String h_res,String b_res) throws Exception {
 		
 		req_header=h_req;
-		res_header=h_res;
+		res_header=res_status+"\r\n"+h_res;
+		res_header="HTTP/1.1 "+res_header; // as OWTF request don't have explicitly
 		res_array=b_res.getBytes();
 		
 		
@@ -89,8 +92,9 @@ public class CustomObject {
     	return req_h.toString();
      
     }	
-
-	
+    
+    
+    
 	
 	
 }
