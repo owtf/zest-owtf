@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,27 +17,42 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 
 public class DBHandler {
 	
-	public Connection c = null;
+	public Connection c_trans = null;
+	public Connection c_tar=null;
 	public Statement stmt = null;
 	public List <HttpMessage> http_list=new ArrayList<HttpMessage>();
 	public PreparedStatement trans_query=null;
+	public PreparedStatement target_query=null;
 	public List <CustomObject> cust_obj=new ArrayList<CustomObject>();
 	
-	
-	public DBHandler(List<Integer> ID,String op_path) throws HttpMalformedHeaderException{
-		
-			try{
-				String url="jdbc:sqlite:"+op_path+"/transactions.db";
-				Class.forName("org.sqlite.JDBC");
-				c = DriverManager.getConnection(url);
-				trans_query = c.prepareStatement("SELECT * FROM transactions where id=?");
+	public DBHandler() throws ClassNotFoundException {
+		Class.forName("org.sqlite.JDBC");
+	}
 
-				for(int i=0;i<ID.size();i++){
-					getTransaction(ID.get(i));
-				}
+	public void CreateRecordScript(List<Integer> trans_ID,List<Integer> target_ID,String target_config_path,String Output_Dir) throws HttpMalformedHeaderException{
+
+			try{
+				String url = GetDBPathforTarget(target_config_path); 
+				c_tar=DriverManager.getConnection(url);
+				
+				for(int i=0;i<target_ID.size();i++)
+				{
+				target_query=PrepareStatement(c_tar,"targets");
+				setQueryArgs(target_query,target_ID.get(i));
+				ResultSet rs_tar = target_query.executeQuery();
+				while(rs_tar.next()){
 					
-				trans_query.close();
-				c.close();
+					String host = GetValueFromResult(rs_tar,"target_url");
+					String modified_host=host.replace("//", "_").replace(':', '_');
+					String target_path = Output_Dir+"/"+modified_host;
+					String transaction_db_path = target_path+"/transactions.db";
+					String trans_url = GetDBPathforTarget(transaction_db_path);
+					Connection c = DriverManager.getConnection(trans_url);
+					trans_query=PrepareStatement(c,"transactions");
+					getTransaction(trans_ID.get(i));
+					}
+				rs_tar.close();
+				}
 			} 
 			
 			catch ( Exception e ) {
@@ -46,33 +62,57 @@ public class DBHandler {
 			Convert_to_http();
 	}
 
-    private void getTransaction(int trans_ID) throws Exception{
-    		
-    		trans_query.setInt(1,trans_ID);
-    		ResultSet rs = trans_query.executeQuery();
-    		
-    		while ( rs.next() ) {
+	public void CreateTargetScript(List<Integer> trans_ID,String Output_Dir) throws HttpMalformedHeaderException{
+		try{
+		
+		String url = GetDBPathforTarget(Output_Dir+"/transactions.db");
+		c_trans=DriverManager.getConnection(url);
+		trans_query=PrepareStatement(c_trans,"transactions");
+		for(int i=0;i<trans_ID.size();i++){
+			getTransaction(trans_ID.get(i));
+			}
+		}
+		catch( Exception e ) {
+			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+			System.exit(0);
+		}
+		Convert_to_http();
+	}
+	
+    private void setQueryArgs(PreparedStatement stmt,Integer arg) throws SQLException {
+    	stmt.setInt(1,arg);
+		
+	}
 
-    			String  raw_request = rs.getString("raw_request");
-    			String res_header= rs.getString("response_headers");
-    			String status_code=rs.getString("response_status");
-    			String res_body=rs.getString("response_body");
-            
-    			/*
-            	System.out.println( "ID = " + id );
-            	System.out.println( "request = " + raw_request );
-            	System.out.println( "response header = " + res_header );
-            	System.out.println( "response code = " + status_code );
-            	System.out.println( "response body  = " + res_body );
-     			System.out.println();
-    			 */
-            
+	private String GetDBPathforTarget(String target_config_path) {
+    		return "jdbc:sqlite:"+target_config_path;
+	}
+    
+    private PreparedStatement PrepareStatement(Connection c,String table) throws SQLException{
+    	String query = "SELECT * FROM "+table+" where id=?";
+    	return c.prepareStatement(query);
+    }
+    
+    private String GetValueFromResult(ResultSet rs,String argument) throws SQLException{
+    	
+    	return rs.getString(argument);
+    }
+
+	private void getTransaction(int trans_ID) throws Exception{
+    		
+    		setQueryArgs(trans_query,trans_ID);
+    		ResultSet rs = trans_query.executeQuery();
+    		while ( rs.next() ) {
+    			String  raw_request = GetValueFromResult(rs,"raw_request");
+    			String res_header= GetValueFromResult(rs,"response_headers");
+    			String status_code=GetValueFromResult(rs,"response_status");
+    			String res_body=GetValueFromResult(rs,"response_body");
     			cust_obj.add(new CustomObject(raw_request,status_code,res_header,res_body));
     		}
     		rs.close();
     		
     }
-	
+
 	private void Convert_to_http() throws HttpMalformedHeaderException{
 		 
 			for(int i=0;i<cust_obj.size();i++){

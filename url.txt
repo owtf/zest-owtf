@@ -1,2 +1,2 @@
-http://www.google.com
-http://www.owasp.org
+http://google.com
+http://owasp.org
