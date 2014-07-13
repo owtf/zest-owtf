@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 
 
 //this class handles the database part, takes transaction id as input and fetches the details from the target_db and 
@@ -103,11 +104,13 @@ public class DBHandler {
     		setQueryArgs(trans_query,trans_ID);
     		ResultSet rs = trans_query.executeQuery();
     		while ( rs.next() ) {
-    			String  raw_request = GetValueFromResult(rs,"raw_request");
+    			String raw_request = GetValueFromResult(rs,"raw_request");
+    			String core_req = raw_request.split("\r\n\r\n")[0];
+    			String req_data = GetValueFromResult(rs,"data");
     			String res_header= GetValueFromResult(rs,"response_headers");
     			String status_code=GetValueFromResult(rs,"response_status");
     			String res_body=GetValueFromResult(rs,"response_body");
-    			cust_obj.add(new CustomObject(raw_request,status_code,res_header,res_body));
+    			cust_obj.add(new CustomObject(core_req,req_data,status_code,res_header,res_body));
     		}
     		rs.close();
     		
@@ -116,7 +119,7 @@ public class DBHandler {
 	private void Convert_to_http() throws HttpMalformedHeaderException{
 		 
 			for(int i=0;i<cust_obj.size();i++){
-				http_list.add(new HttpMessage(cust_obj.get(i).req_header,null,cust_obj.get(i).res_header,cust_obj.get(i).res_array));	
+				http_list.add(new HttpMessage(cust_obj.get(i).req_header,cust_obj.get(i).req_data,cust_obj.get(i).res_header,cust_obj.get(i).res_array));	
 			}
 	 }
 }

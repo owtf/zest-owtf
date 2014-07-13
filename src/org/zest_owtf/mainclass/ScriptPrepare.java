@@ -14,6 +14,7 @@ public class ScriptPrepare {
 	//scriptwrapper created
 	public ScriptWrapper script= new ScriptWrapper();
 	public ZestScript scr=null;
+	public ZestScriptWrapper zsw=null;
 	
 	public ScriptPrepare(String Root_dir){
 		
@@ -26,7 +27,7 @@ public class ScriptPrepare {
 		script.setLoadOnStart(false);
 		
 		//zest-scriptwrapper 
-		ZestScriptWrapper zsw = new ZestScriptWrapper(script);
+		zsw = new ZestScriptWrapper(script);
 		
 		scr= zsw.getZestScript();
 	}

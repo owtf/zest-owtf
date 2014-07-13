@@ -20,7 +20,8 @@ public class CustomObject {
 	 public Header[] h_res;
 	 public String req_header;
 	 public String res_header;
-	 byte[] res_array ;
+	 byte[] res_array;
+	 byte[] req_data;
 	 public String method;
 	
 	public CustomObject(HttpGet req,HttpResponse res,String uri,String meth) throws Exception {
@@ -48,9 +49,10 @@ public class CustomObject {
 	}
 //main useful constructor
 	
-	public CustomObject(String h_req,String res_status,String h_res,String b_res) throws Exception {
+	public CustomObject(String h_req,String data,String res_status,String h_res,String b_res) throws Exception {
 		
 		req_header=h_req;
+		req_data=data.getBytes();
 		res_header=res_status+"\r\n"+h_res;
 		res_header="HTTP/1.1 "+res_header; // as OWTF request don't have explicitly
 		res_array=b_res.getBytes();

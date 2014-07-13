@@ -68,7 +68,7 @@ public static void main(String[] args) throws Exception {
 		db_handler.CreateTargetScript(transactions,Output_Dir);
 	
 	//Creates Zest script from List of HttpMessage
- 	new Creator(db_handler.http_list,scr.scr,Output_path);
+ 	new Creator(db_handler.http_list,scr.scr,scr.zsw,Output_path);
 	
 	
 };
