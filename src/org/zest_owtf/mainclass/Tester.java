@@ -62,9 +62,9 @@ public static void main(String[] args) throws Exception {
 	//gets records of transactions from database of the given target,converts it to custom objects and then to list of HttpMessage
 	//CustomObject is just an intermediate representation to keep a better track of transactions
 	DBHandler db_handler = new DBHandler();
-	if(target_count > 1) //if true then target script
+	if(target_count > 1) //if true then record script
 		db_handler.CreateRecordScript(transactions,target_list,target_config_path,Output_Dir);
-	else //recorded script
+	else //target script
 		db_handler.CreateTargetScript(transactions,Output_Dir);
 	
 	//Creates Zest script from List of HttpMessage

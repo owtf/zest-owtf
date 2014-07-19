@@ -18,11 +18,11 @@ public class ScriptPrepare {
 	
 	public ScriptPrepare(String Root_dir){
 		
-		rdr=new Filereader(Root_dir+"/zest/test.zst");
+		rdr=new Filereader(Root_dir+"/zest/StandAloneTemplate.zst");
 		script.setType(sa);
 		script.setContents(rdr.content);
 		script.setEngine(null);
-		script.setName("test_script");
+		script.setName("OWTFZestScript");
 		script.setDescription(null);
 		script.setLoadOnStart(false);
 		

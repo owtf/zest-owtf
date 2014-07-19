@@ -44,7 +44,7 @@ public class DBHandler {
 				while(rs_tar.next()){
 					
 					String host = GetValueFromResult(rs_tar,"target_url");
-					String modified_host=host.replace("//", "_").replace(':', '_');
+					String modified_host=host.replace("://", "__").replace(":", "").replace("/", "_");
 					String target_path = Output_Dir+"/"+modified_host;
 					String transaction_db_path = target_path+"/transactions.db";
 					String trans_url = GetDBPathforTarget(transaction_db_path);
