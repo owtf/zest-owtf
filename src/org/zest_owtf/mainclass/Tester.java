@@ -3,6 +3,7 @@ package org.zest_owtf.mainclass;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -37,8 +38,9 @@ public static void main(String[] args) throws Exception {
 	String Output_path=args[3];
 	String[] targets=args[4].split(" ");	
 	String[] items = args[5].split(" ");
+	String record = args[6];
 	int req_count=items.length;
-	
+
 	//converts string of target ids and transaction ids to List of integers
 	
 	List <Integer> transactions= new ArrayList<Integer>();
@@ -62,8 +64,9 @@ public static void main(String[] args) throws Exception {
 	//gets records of transactions from database of the given target,converts it to custom objects and then to list of HttpMessage
 	//CustomObject is just an intermediate representation to keep a better track of transactions
 	DBHandler db_handler = new DBHandler();
-	if(target_count > 1) //if true then record script
+	if(record.equals("True")){ //if true then record script
 		db_handler.CreateRecordScript(transactions,target_list,target_config_path,Output_Dir);
+	}
 	else //target script
 		db_handler.CreateTargetScript(transactions,Output_Dir);
 	
