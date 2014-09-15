@@ -33,28 +33,19 @@ public static void main(String[] args) throws Exception {
 	
 	//Assigns variables from arguments
 	String Root_Dir=args[0];
-	String Output_Dir=args[1];
-	String target_config_path=args[2];
-	String Output_path=args[3];
-	String[] targets=args[4].split(" ");	
-	String[] items = args[5].split(" ");
-	String record = args[6];
-	int req_count=items.length;
+	String Output_path=args[1];
+	String[] transaction = args[2].split(" ");
+	String db_url=args[3];
+	String db_user_id=args[4];
+	String db_password=args[5];
+	int req_count=transaction.length;
 
 	//converts string of target ids and transaction ids to List of integers
 	
 	List <Integer> transactions= new ArrayList<Integer>();
 	for(int i=0;i<req_count;i++){
 		
-		transactions.add(Integer.parseInt(items[i]));
-		
-	}
-	
-	int target_count=targets.length;
-	List <Integer> target_list= new ArrayList<Integer>();
-	for(int i=0;i<target_count;i++){
-		
-		target_list.add(Integer.parseInt(targets[i]));
+		transactions.add(Integer.parseInt(transaction[i]));
 		
 	}
 	
@@ -63,12 +54,8 @@ public static void main(String[] args) throws Exception {
 	
 	//gets records of transactions from database of the given target,converts it to custom objects and then to list of HttpMessage
 	//CustomObject is just an intermediate representation to keep a better track of transactions
-	DBHandler db_handler = new DBHandler();
-	if(record.equals("True")){ //if true then record script
-		db_handler.CreateRecordScript(transactions,target_list,target_config_path,Output_Dir);
-	}
-	else //target script
-		db_handler.CreateTargetScript(transactions,Output_Dir);
+	DBHandler db_handler = new DBHandler(db_url,db_user_id,db_password);
+	db_handler.CreateZestScript(transactions);
 	
 	//Creates Zest script from List of HttpMessage
  	new Creator(db_handler.http_list,scr.scr,scr.zsw,Output_path);
@@ -123,7 +110,7 @@ public static void main(String[] args) throws Exception {
 		
 	
 	}
-	*/
-
+	
+    */
 
 }

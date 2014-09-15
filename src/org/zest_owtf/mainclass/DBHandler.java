@@ -18,7 +18,7 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class DBHandler {
 	
-	public Connection c_trans = null;
+	public Connection c_global = null;
 	public Connection c_tar=null;
 	public Statement stmt = null;
 	public List <HttpMessage> http_list=new ArrayList<HttpMessage>();
@@ -26,49 +26,15 @@ public class DBHandler {
 	public PreparedStatement target_query=null;
 	public List <CustomObject> cust_obj=new ArrayList<CustomObject>();
 	
-	public DBHandler() throws ClassNotFoundException {
-		Class.forName("org.sqlite.JDBC");
+	public DBHandler(String db_url,String db_user_id,String db_password) throws ClassNotFoundException, SQLException {
+		Class.forName("org.postgresql.Driver");
+		String url = GetDBPathforTarget(db_url);
+		c_global=DriverManager.getConnection(url,db_user_id, db_password);
+		trans_query=PrepareStatement(c_global,"transactions");
 	}
 
-	public void CreateRecordScript(List<Integer> trans_ID,List<Integer> target_ID,String target_config_path,String Output_Dir) throws HttpMalformedHeaderException{
-
-			try{
-				String url = GetDBPathforTarget(target_config_path); 
-				c_tar=DriverManager.getConnection(url);
-				
-				for(int i=0;i<target_ID.size();i++)
-				{
-				target_query=PrepareStatement(c_tar,"targets");
-				setQueryArgs(target_query,target_ID.get(i));
-				ResultSet rs_tar = target_query.executeQuery();
-				while(rs_tar.next()){
-					
-					String host = GetValueFromResult(rs_tar,"target_url");
-					String modified_host=host.replace("://", "__").replace(":", "").replace("/", "_");
-					String target_path = Output_Dir+"/"+modified_host;
-					String transaction_db_path = target_path+"/transactions.db";
-					String trans_url = GetDBPathforTarget(transaction_db_path);
-					Connection c = DriverManager.getConnection(trans_url);
-					trans_query=PrepareStatement(c,"transactions");
-					getTransaction(trans_ID.get(i));
-					}
-				rs_tar.close();
-				}
-			} 
-			
-			catch ( Exception e ) {
-				System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-				System.exit(0);
-			}
-			Convert_to_http();
-	}
-
-	public void CreateTargetScript(List<Integer> trans_ID,String Output_Dir) throws HttpMalformedHeaderException{
+	public void CreateZestScript(List<Integer> trans_ID) throws HttpMalformedHeaderException{
 		try{
-		
-		String url = GetDBPathforTarget(Output_Dir+"/transactions.db");
-		c_trans=DriverManager.getConnection(url);
-		trans_query=PrepareStatement(c_trans,"transactions");
 		for(int i=0;i<trans_ID.size();i++){
 			getTransaction(trans_ID.get(i));
 			}
@@ -81,12 +47,11 @@ public class DBHandler {
 	}
 	
     private void setQueryArgs(PreparedStatement stmt,Integer arg) throws SQLException {
-    	stmt.setInt(1,arg);
-		
+    	stmt.setInt(1,arg);	
 	}
 
 	private String GetDBPathforTarget(String target_config_path) {
-    		return "jdbc:sqlite:"+target_config_path;
+    		return "jdbc:postgresql://"+target_config_path;
 	}
     
     private PreparedStatement PrepareStatement(Connection c,String table) throws SQLException{
